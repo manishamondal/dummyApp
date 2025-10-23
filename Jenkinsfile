@@ -39,6 +39,7 @@ node {
               --setdefaultusername
 
             "C:/Users/manisha.mondal/AppData/Roaming/npm/sfdx" force:org:display --targetusername %SFDC_USERNAME%
+            sf --version
             """
         }
     }
