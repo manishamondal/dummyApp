@@ -31,29 +31,38 @@ node {
             type "%JWT_KEY_FILE%" > server.key
             if "%SFDC_INSTANCE_URL%"=="" ( set SFDC_INSTANCE_URL=https://login.salesforce.com )
 
-            "C:/Users/manisha.mondal/AppData/Roaming/npm/sfdx" force:auth:jwt:grant ^
+            "C:/Users/manisha.mondal/AppData/Roaming/npm/sfdx" auth:jwt:grant ^
               --clientid %SFDC_CLIENT_ID% ^
               --jwtkeyfile server.key ^
               --username %SFDC_USERNAME% ^
               --instanceurl %SFDC_INSTANCE_URL% ^
               --setdefaultusername
 
-            "C:/Program Files (x86)/sf/bin/sf" force:org:display --targetusername %SFDC_USERNAME%
+            "C:/Program Files (x86)/sf/bin/sf" org display --target-org %SFDC_USERNAME%
             """
         }
     }
 
-    stage('Deploy to Salesforce (MDAPI)') {
-        echo "Deploying via MDAPI..."
+    stage('Deploy to Salesforce via Ant') {
+        echo "Deploying via Ant to avoid Node.js memory issues..."
+        def antHome = tool name: 'Ant', type: 'hudson.tasks.Ant$AntInstallation'
+        withEnv([
+            "ANT_HOME=${antHome}",
+            "PATH+ANT=${antHome}\\bin"
+        ]) {
+            bat 'ant deployCode -propertyfile build.properties'
+        }
+    }
+
+    stage('Optional: Deploy via sf CLI') {
+        echo "Deploying via sf CLI (in case you want CLI deployment)..."
         withCredentials([
             string(credentialsId: 'sfdx_username', variable: 'SFDC_USERNAME')
         ]) {
-                withEnv(['NODE_OPTIONS=--max-old-space-size=4096 --trace-warnings']) {
-   
-    bat '"C:/Program Files (x86)/sf/bin/sf" deploy metadata --source-dir force-app/main/default --target-org CICD_DevHub --verbose'
-}
-
+            // Set Node.js memory limit to prevent crashes
+            withEnv(['NODE_OPTIONS=--max_old_space_size=4096 --trace-warnings']) {
+                bat '"C:/Program Files (x86)/sf/bin/sf" deploy metadata --source-dir force-app/main/default --target-org CICD_DevHub --verbose'
             }
-        
+        }
     }
 }
