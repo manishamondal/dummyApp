@@ -1,28 +1,26 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project name="SalesforcePackage" default="zipCode">
+<project name="SalesforcePackage" default="deployCode">
 
-    <!-- Load properties -->
+    <!-- Load Salesforce properties -->
     <property file="build.properties"/>
 
-    <!-- Include Salesforce Ant tasks -->
+    <!-- Load Salesforce Ant tasks -->
     <taskdef resource="com/salesforce/antlib.xml"
              uri="antlib:com.salesforce"
              classpath="lib/ant-salesforce.jar"/>
 
-    <!-- Clean & create build folder -->
-    <target name="prepare">
-        <mkdir dir="build"/>
-    </target>
-
-    <!-- Create ZIP of the metadata -->
-    <target name="zipCode" depends="prepare">
-        <zip destfile="build/package.zip" basedir="force-app/main/default">
-            <!-- include package.xml -->
-            <fileset dir=".">
-                <include name="package.xml"/>
-            </fileset>
-        </zip>
-        <echo message="✅ Salesforce metadata packaged successfully: build/package.zip"/>
+    <!-- Deploy metadata -->
+    <target name="deployCode">
+        <sf:deploy
+            username="${sf.username}"
+            jwtkeyfile="${sf.jwt.keyFile}"
+            consumerKey="${sf.consumerKey}"
+            serverurl="${sf.serverurl}"
+            deployRoot="${sf.deployRoot}"
+            checkOnly="${sf.checkOnly}"
+            testLevel="${sf.testLevel}"
+            ignoreWarnings="true"
+            rollbackOnError="true"/>
     </target>
 
 </project>
