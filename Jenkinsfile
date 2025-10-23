@@ -42,8 +42,8 @@ node {
         }
     }
 
-    stage('Deploy to Salesforce (MDAPI)') {
-        echo "Deploying via MDAPI..."
+    stage('Deploy to Salesforce') {
+        echo "Deploying..."
         withCredentials([
             string(credentialsId: 'sfdx_username', variable: 'SFDC_USERNAME')
         ]) {
