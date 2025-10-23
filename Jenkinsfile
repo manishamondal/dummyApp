@@ -37,32 +37,19 @@ node {
               --username %SFDC_USERNAME% ^
               --instanceurl %SFDC_INSTANCE_URL% ^
               --setdefaultusername
-
-            "C:/Program Files (x86)/sf/bin/sf" org display --target-org %SFDC_USERNAME%
             """
         }
     }
 
     stage('Deploy to Salesforce via Ant') {
-        echo "Deploying via Ant to avoid Node.js memory issues..."
+        echo "Deploying metadata via Ant..."
         def antHome = tool name: 'Ant', type: 'hudson.tasks.Ant$AntInstallation'
         withEnv([
             "ANT_HOME=${antHome}",
             "PATH+ANT=${antHome}\\bin"
         ]) {
-            bat 'ant -version'
-        }
-    }
-
-    stage('Optional: Deploy via sf CLI') {
-        echo "Deploying via sf CLI (in case you want CLI deployment)..."
-        withCredentials([
-            string(credentialsId: 'sfdx_username', variable: 'SFDC_USERNAME')
-        ]) {
-            // Set Node.js memory limit to prevent crashes
-            withEnv(['NODE_OPTIONS=--max_old_space_size=4096 --trace-warnings']) {
-                bat '"C:/Program Files (x86)/sf/bin/sf" deploy metadata --source-dir force-app/main/default --target-org CICD_DevHub --verbose'
-            }
+            // deployCode target in build.xml must handle JWT auth via build.properties
+            bat 'ant deployCode -propertyfile build.properties'
         }
     }
 }
