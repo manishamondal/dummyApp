@@ -15,7 +15,7 @@ node {
             "PATH+ANT=${antHome}\\bin"
         ]) {
             bat 'ant -version'
-            bat 'ant -f build.xml package'
+            bat 'ant zipCode'
         }
     }
 
