@@ -38,8 +38,7 @@ node {
               --instanceurl %SFDC_INSTANCE_URL% ^
               --setdefaultusername
 
-            "C:/Users/manisha.mondal/AppData/Roaming/npm/sfdx" force:org:display --targetusername %SFDC_USERNAME%
-            sf --version
+            "C:/Program Files (x86)/sf/bin/sf" force:org:display --targetusername %SFDC_USERNAME%
             """
         }
     }
