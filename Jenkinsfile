@@ -31,25 +31,30 @@ node {
             type "%JWT_KEY_FILE%" > server.key
             if "%SFDC_INSTANCE_URL%"=="" ( set SFDC_INSTANCE_URL=https://login.salesforce.com )
 
-            "C:/Users/manisha.mondal/AppData/Roaming/npm/sfdx" auth:jwt:grant ^
+            "C:/Program Files/sf/bin/sf" force:auth:jwt:grant ^
               --clientid %SFDC_CLIENT_ID% ^
               --jwtkeyfile server.key ^
               --username %SFDC_USERNAME% ^
               --instanceurl %SFDC_INSTANCE_URL% ^
               --setdefaultusername
+
+            "C:/Program Files/sf/bin/sf" force:org:display --targetusername %SFDC_USERNAME%
+            "C:/Program Files/sf/bin/sf" --version
             """
         }
     }
 
-    stage('Deploy to Salesforce via Ant') {
-        echo "Deploying metadata via Ant..."
-        def antHome = tool name: 'Ant', type: 'hudson.tasks.Ant$AntInstallation'
-        withEnv([
-            "ANT_HOME=${antHome}",
-            "PATH+ANT=${antHome}\\bin"
+    stage('Deploy to Salesforce (MDAPI)') {
+        echo "Deploying via MDAPI..."
+        withCredentials([
+            string(credentialsId: 'sfdx_username', variable: 'SFDC_USERNAME')
         ]) {
-            // deployCode target in build.xml must handle JWT auth via build.properties
-            bat 'ant deployCode -propertyfile build.properties'
-        }
+                withEnv(['NODE_OPTIONS=--max-old-space-size=4096 --trace-warnings']) {
+   
+    bat '"C:/Program Files/sf/bin/sf" deploy metadata --source-dir force-app/main/default --target-org CICD_DevHub --verbose'
+}
+
+            }
+        
     }
 }
