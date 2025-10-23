@@ -50,7 +50,7 @@ node {
             "ANT_HOME=${antHome}",
             "PATH+ANT=${antHome}\\bin"
         ]) {
-            bat 'ant deployCode -propertyfile build.properties'
+            bat 'ant -version'
         }
     }
 
