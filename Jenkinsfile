@@ -34,8 +34,7 @@ node {
               --clientid %SFDC_CLIENT_ID% ^
               --jwtkeyfile server.key ^
               --username %SFDC_USERNAME% ^
-              --instanceurl %SFDC_INSTANCE_URL% ^
-              --setdefaultusername
+              -a CICD_DevHub
 
             "C:/Program Files/sf/bin/sf" force:org:display --targetusername %SFDC_USERNAME%
             "C:/Program Files/sf/bin/sf" --version
