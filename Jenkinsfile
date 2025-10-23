@@ -51,7 +51,7 @@ node {
         ]) {
                 withEnv(['NODE_OPTIONS=--max-old-space-size=4096 --trace-warnings']) {
    
-    bat '"C:\Program Files (x86)\sf\bin" deploy metadata --source-dir force-app/main/default --target-org CICD_DevHub --verbose'
+    bat '"C:/Program Files (x86)/sf/bin/sf" deploy metadata --source-dir force-app/main/default --target-org CICD_DevHub --verbose'
 }
 
             }
